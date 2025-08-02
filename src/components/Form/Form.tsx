@@ -8,10 +8,10 @@ interface FormProps {
 }
 
 export default function Form({ onSubmit }: FormProps) {
-  const handleSubmit = (formData: FormData) => {
-    const query = (formData.get("query") as string)?.trim();
+  const handleSubmit = (formdata: FormData) => {
+    const query = formdata.get("search") as string;
 
-    if (!query) {
+    if (!query.trim()) {
       toast.error("Please enter your search query.");
       return;
     }

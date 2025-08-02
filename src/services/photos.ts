@@ -1,29 +1,18 @@
 import axios from "axios";
 import { Photo } from "../types/photo";
 
-const TOKEN = import.meta.env.API_KEY;
+const API_KEY = import.meta.env.API_KEY;
 axios.defaults.baseURL = "https://api.pexels.com/v1/";
-axios.defaults.headers.common["Authorization"] = TOKEN;
+axios.defaults.headers.common["Authorization"] = API_KEY;
 axios.defaults.params = {
   orientation: "landscape",
 };
 
-export const getPhotos = async (query: string) => {
-  const response = await axios.get(`search`, {
-    params: { query },
-  });
+interface PexelsResponse {
+  photos: Photo[];
+}
+export const getPhotos = async (query: string): Promise<Photo[]> => {
+  const response = await axios.get<PexelsResponse>(`search?query=${query}`);
 
-  return response.data.results;
-  // const rawPhoto = response.data.photos;
-
-  // const filterPhotos: Photo[] = rawPhoto.map((photo: any) => ({
-  //   id: photo.id,
-  //   avg_color: photo.avg_color,
-  //   alt: photo.alt,
-  //   src: {
-  //     large: photo.src.large,
-  //     original: photo.src.original,
-  //   },
-  // }));
-  // return filterPhotos;
+  return response.data.photos;
 };
