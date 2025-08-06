@@ -5,14 +5,21 @@ import PhotosGalleryItem from "../PhotosGalleryItem/PhotosGalleryItem";
 
 interface PhotosGalleryProps {
   photos: Photo[];
+  onPhotoClick: (photo: Photo) => void;
 }
-export default function PhotosGallery({ photos }: PhotosGalleryProps) {
+export default function PhotosGallery({
+  photos,
+  onPhotoClick,
+}: PhotosGalleryProps) {
   return (
     <Grid>
       {photos.map((photo) => {
         return (
           <GridItem key={photo.id}>
-            <PhotosGalleryItem photo={photo} />
+            <PhotosGalleryItem
+              photo={photo}
+              onPhotoClick={() => onPhotoClick(photo)}
+            />
           </GridItem>
         );
       })}

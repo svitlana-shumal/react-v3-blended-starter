@@ -5,9 +5,13 @@ import styles from "./PhotosGalleryItem.module.css";
 
 interface PhotosGalleryItemPropr {
   photo: Photo;
+  onPhotoClick: () => void;
 }
 
-export default function PhotosGalleryItem({ photo }: PhotosGalleryItemPropr) {
+export default function PhotosGalleryItem({
+  photo,
+  onPhotoClick,
+}: PhotosGalleryItemPropr) {
   return (
     <GridItem>
       <div
@@ -17,7 +21,12 @@ export default function PhotosGalleryItem({ photo }: PhotosGalleryItemPropr) {
           borderColor: photo.avg_color,
         }}
       >
-        <img src={photo.src.original} alt={photo.alt} />
+        <img
+          src={photo.src.original}
+          alt={photo.alt}
+          onClick={onPhotoClick}
+          style={{ cursor: "pointer" }}
+        />
       </div>
     </GridItem>
   );
