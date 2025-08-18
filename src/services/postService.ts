@@ -1,73 +1,73 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { Post } from "../types/post";
 
-export interface FetchPostsResponse {
+axios.defaults.baseURL = "https://jsonplaceholder.typicode.com";
+
+interface FetchPostsResponse {
   posts: Post[];
-  totalPages: number;
+  totalCount: number;
 }
 
-// axios.defaults.baseURL = "https://jsonplaceholder.typicode.com";
-const BASE_URL = "https://jsonplaceholder.typicode.com";
-const TOKEN = import.meta.env.VITE_API_KEY;
-
-export async function fetchPosts(
-  search: string,
+export const fetchPosts = async (
+  searchText: string,
   page: number,
-  perPage: number = 12
-): Promise<FetchPostsResponse> {
-  const params: Record<string, unknown> = {
-    page: String(page),
-    perPage: String(perPage),
-  };
-  if (search.trim()) {
-    params.search = search;
-  }
-  const config = {
-    params,
-    headers: { Authorization: `Bearer ${TOKEN}` },
-  };
-
-  const response = await axios.get<FetchPostsResponse>(BASE_URL, config);
-  return response.data;
-}
-
-export async function createPost(newPost: {
-  title: string;
-  content: string;
-  tag: string;
-}): Promise<Post> {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${TOKEN}`,
+  limit: number
+): Promise<FetchPostsResponse> => {
+  const response = await axios.get<Post[]>("/posts", {
+    params: {
+      ...(searchText !== "" && { q: searchText }),
+      _limit: limit,
+      _page: page,
     },
+  });
+  return {
+    posts: response.data,
+    totalCount: Number(response.headers["x-total-count"]),
   };
+};
 
-  const response = await axios.post<Post>(BASE_URL, newPost, config);
-  return response.data;
-}
+// export async function createPost(newPost: {
+//   title: string;
+//   content: string;
+//   tag: string;
+// }): Promise<Post> {
+//   const config = {
+//     headers: {
+//       Authorization: `Bearer ${TOKEN}`,
+//     },
+//   };
 
-export async function editPost(newDataPost: {
-  title: string;
-  content: string;
-  tag: string;
-}): Promise<Post> {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${TOKEN}`,
-    },
-  };
+//   const response = await axios.post<Post>(BASE_URL, newPost, config);
+//   return response.data;
+// }
 
-  const response = await axios.patch(BASE_URL, newDataPost, config);
-  return response.data;
-}
+export const editPost = async (newDataPost: Post) => {
+  const { data } = await axios.patch<Post>(`/posts/${newDataPost.id}}`, newDataPost);
+  return data;
+};
 
-export async function deletePost(postId: string): Promise<Post> {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${TOKEN}`,
-    },
-  };
+// export async function editPost(newDataPost: {
+//   title: string;
+//   content: string;
+//   tag: string;
+// }): Promise<Post> {
+//   const config = {
+//     headers: {
+//       Authorization: `Bearer ${TOKEN}`,
+//     },
+//   };
 
-  const response: AxiosResponse<Post> = await axios.delete(`${BASE_URL}/${postId}`, config);
-  return response.data;
-}
+//   const response = await axios.patch(BASE_URL, newDataPost, config);
+//   return response.data;
+// }
+
+// export async function deletePost(postId: string): Promise<Post> {
+//   const config = {
+//     headers: {
+//       Authorization: `Bearer ${TOKEN}`,
+//     },
+//   };
+
+//   const response: AxiosResponse<Post> = await axios.delete(`${BASE_URL}/${postId}`, config);
+//   return response.data;
+// }
