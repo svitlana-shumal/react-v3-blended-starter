@@ -4,3 +4,8 @@ export interface Post {
   title: string;
   userId: number;
 }
+
+export interface CreatePost {
+  title: string;
+  body: string;
+}

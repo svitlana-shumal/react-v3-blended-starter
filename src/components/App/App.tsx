@@ -6,9 +6,9 @@ import Modal from "../Modal/Modal";
 import PostList from "../PostList/PostList";
 import SearchBox from "../SearchBox/SearchBox";
 import Pagination from "../Pagination/Pagination";
+import CreatePostForm from "../CreatePostForm/CreatePostForm";
 import css from "./App.module.css";
 import { Post } from "../../types/post";
-import PostForm from "../CreatePostForm/CreatePostForm";
 import EditPostForm from "../EditPostForm/EditPostForm";
 
 const LIMIT = 8;
@@ -22,7 +22,7 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const { data } = useQuery({
-    queryKey: ["posts", currentPage],
+    queryKey: ["posts", searchQuery, currentPage],
     queryFn: () => fetchPosts(searchQuery, currentPage, LIMIT),
     placeholderData: keepPreviousData,
   });
@@ -43,7 +43,7 @@ export default function App() {
   };
 
   const handleChange = useDebouncedCallback((event: ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event?.target.value);
+    setSearchQuery(event.target.value);
   }, 1000);
   const totalPages = data?.totalCount ? Math.ceil(data.totalCount / LIMIT) : 0;
 
@@ -59,19 +59,26 @@ export default function App() {
             onPageChange={handlePageChange}
           />
         )}
-        <button className={css.button}>Create post</button>
+        <button
+          className={css.button}
+          onClick={() => {
+            setIsCreatePost(true);
+            setIsEditPost(false);
+            setIsModalOpen(true);
+          }}
+        >
+          Create post
+        </button>
       </header>
       {isModalOpen && (
-        <Modal>
-          {/* {isCreatePost && <PostForm />} */}
+        <Modal onClose={handleCloseModal}>
+          {isCreatePost && <CreatePostForm onCancel={handleCloseModal} />}
           {isEditPost && editedPost && (
             <EditPostForm initialValues={editedPost} onClose={handleCloseModal} />
           )}
         </Modal>
       )}
       {data && data?.posts.length > 0 && <PostList posts={data.posts} handleEdit={handleEdit} />}
-
-      {/* Передати через children компонент CreatePostForm або EditPostForm */}
     </div>
   );
 }

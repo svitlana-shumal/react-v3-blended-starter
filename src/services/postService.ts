@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Post } from "../types/post";
+import { CreatePost, Post } from "../types/post";
 
 axios.defaults.baseURL = "https://jsonplaceholder.typicode.com";
 
@@ -26,48 +26,17 @@ export const fetchPosts = async (
   };
 };
 
-// export async function createPost(newPost: {
-//   title: string;
-//   content: string;
-//   tag: string;
-// }): Promise<Post> {
-//   const config = {
-//     headers: {
-//       Authorization: `Bearer ${TOKEN}`,
-//     },
-//   };
-
-//   const response = await axios.post<Post>(BASE_URL, newPost, config);
-//   return response.data;
-// }
+export const createPost = async (newPost: CreatePost) => {
+  const response = await axios.post<Post>("/posts", newPost);
+  return response.data;
+};
 
 export const editPost = async (newDataPost: Post) => {
   const { data } = await axios.patch<Post>(`/posts/${newDataPost.id}}`, newDataPost);
   return data;
 };
 
-// export async function editPost(newDataPost: {
-//   title: string;
-//   content: string;
-//   tag: string;
-// }): Promise<Post> {
-//   const config = {
-//     headers: {
-//       Authorization: `Bearer ${TOKEN}`,
-//     },
-//   };
-
-//   const response = await axios.patch(BASE_URL, newDataPost, config);
-//   return response.data;
-// }
-
-// export async function deletePost(postId: string): Promise<Post> {
-//   const config = {
-//     headers: {
-//       Authorization: `Bearer ${TOKEN}`,
-//     },
-//   };
-
-//   const response: AxiosResponse<Post> = await axios.delete(`${BASE_URL}/${postId}`, config);
-//   return response.data;
-// }
+export const deletePost = async (postId: number) => {
+  const response = await axios.delete<Post>(`/posts/${postId}`);
+  return response.data;
+};
