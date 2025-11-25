@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { fetchPosts } from "../../services/postService";
 import { useDebouncedCallback } from "use-debounce";
@@ -42,15 +42,17 @@ export default function App() {
     setIsCreatePost(false);
   };
 
-  const handleChange = useDebouncedCallback((event: ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value);
-  }, 1000);
+  const handleChange = useDebouncedCallback((val: string) => {
+    setSearchQuery(val);
+    setCurrentPage(1);
+  }, 300);
+
   const totalPages = data?.totalCount ? Math.ceil(data.totalCount / LIMIT) : 0;
 
   return (
     <div className={css.app}>
       <header className={css.toolbar}>
-        <SearchBox onChange={handleChange} />
+        <SearchBox value={searchQuery} onSearch={handleChange} />
 
         {totalPages > 1 && (
           <Pagination
@@ -78,7 +80,9 @@ export default function App() {
           )}
         </Modal>
       )}
-      {data && data?.posts.length > 0 && <PostList posts={data.posts} handleEdit={handleEdit} />}
+      {data && data?.posts.length > 0 && (
+        <PostList posts={data.posts} toggleModal={handleCloseModal} toggleEditPost={handleEdit} />
+      )}
     </div>
   );
 }

@@ -12,8 +12,8 @@ interface EditPostFormProps {
 }
 
 const PostScheme = Yup.object().shape({
-  title: Yup.string().required("title required").min(3).max(50),
-  body: Yup.string().required("body required").min(3).max(50),
+  title: Yup.string().required("Title is required").min(3).max(50),
+  body: Yup.string().required("Content is required").max(500, "Message too long"),
 });
 export default function EditPostForm({ initialValues, onClose }: EditPostFormProps) {
   const queryClient = useQueryClient();
@@ -22,12 +22,16 @@ export default function EditPostForm({ initialValues, onClose }: EditPostFormPro
     mutationFn: editPost,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
+      alert("Post edited successfully!");
+      onClose();
+    },
+    onError: (error) => {
+      console.error("Edit post error:", error);
     },
   });
 
   const handleSubmit = (values: Post, actions: FormikHelpers<Post>) => {
     mutation.mutate(values);
-    onClose();
     actions.resetForm();
   };
   return (
@@ -46,11 +50,11 @@ export default function EditPostForm({ initialValues, onClose }: EditPostFormPro
         </div>
 
         <div className={css.actions}>
-          <button type="button" className={css.cancelButton}>
+          <button type="button" className={css.cancelButton} onClick={onClose}>
             Cancel
           </button>
-          <button type="submit" className={css.submitButton} disabled={false}>
-            Edit post
+          <button type="submit" className={css.submitButton} disabled={mutation.isPending}>
+            {mutation.isPending ? "Editing..." : "Edit post"}
           </button>
         </div>
       </Form>
