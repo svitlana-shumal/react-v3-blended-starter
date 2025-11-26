@@ -14,7 +14,7 @@ export default async function PostsPage({ params }: PostPageProps) {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ['posts'],
+    queryKey: ['posts', userId],
     queryFn: () =>
       fetchPosts({
         searchText: '',
