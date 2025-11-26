@@ -1,5 +1,3 @@
-// import { fetchPosts } from '@/lib/api';
-
 import { fetchPosts } from '@/lib/api';
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 import PostsClient from './Posts.client';
