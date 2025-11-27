@@ -18,13 +18,24 @@ export const fetchPosts = async ({
   const response = await axios.get<FetchPostsResponse>('/posts', {
     params: {
       userId,
-      ...(searchText !== '' && { q: searchText }),
+      // ...(searchText !== '' && { q: searchText }),
       _page: page,
       _limit: 8,
     },
   });
-  const totalCount = Number(response.headers['x-total-count']);
-  return { posts: response.data, totalCount };
+  let posts = response.data;
+  if (searchText.trim() !== '') {
+    posts = posts.filter(
+      (post) =>
+        post.title.toLowerCase().includes(searchText.toLowerCase()) ||
+        post.body.toLowerCase().includes(searchText.toLowerCase())
+    );
+  }
+  const totalCount = posts.length;
+
+  return { posts, totalCount };
+  // const totalCount = Number(response.headers['x-total-count']);
+  // return { posts: response.data, totalCount };
 };
 
 interface NewPostContent {
